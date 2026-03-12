@@ -1,5 +1,17 @@
 # Claude Artifact Viewer — Changelog
 
+## [1.2.3] - 2026-03-12 @ Electron Security Upgrade
+
+### Security
+- **CVE fix (GHSA-vmqv-hx8q-j7mg)**: Upgraded Electron from `33.4.11` to `41.0.1` to resolve the ASAR Integrity Bypass vulnerability (moderate severity). The advisory requires `>=35.7.5`; upgrading to `41.0.1` exceeds that threshold.
+- Electron version pinned exactly (`41.0.1`, no `^` caret) per project versioning standards.
+- `npm audit` confirms 0 vulnerabilities after upgrade.
+
+### Compatibility
+- No API breaking changes detected between Electron 33 and 41 for the APIs used by this project (`BrowserWindow`, `contextBridge`, `ipcRenderer`, `ipcMain`, `webFrame`, `dialog`, `screen`, `app`).
+- No native modules required rebuild (`@electron/rebuild` confirmed clean).
+- Launch validation passed — HTTP server started, window rendered, clean SIGTERM exit.
+
 ## [1.2.2] - 2026-03-12 18:23 @ Security Hardening
 
 ### Security
