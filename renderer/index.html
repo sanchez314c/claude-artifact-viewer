@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self'">
+  <title>Artifact Viewer</title>
+  <link rel="stylesheet" href="../../node_modules/highlight.js/styles/github-dark.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Custom title bar -->
+  <div id="titlebar">
+    <div id="titlebar-drag">
+      <span id="titlebar-icon">&#9670;</span>
+      <span id="titlebar-text">ARTIFACT VIEWER</span>
+      <span id="artifact-count" class="badge">0</span>
+    </div>
+    <div id="titlebar-controls">
+      <button id="btn-pin" class="titlebar-btn" title="Pin on top">&#8862;</button>
+      <button id="btn-minimize" class="titlebar-btn" title="Minimize">&#9472;</button>
+      <button id="btn-close" class="titlebar-btn" title="Close">&#10005;</button>
+    </div>
+  </div>
+
+  <!-- Main content area -->
+  <div id="container">
+    <!-- Artifact tabs -->
+    <div id="tabs-bar">
+      <div id="tabs-scroll"></div>
+    </div>
+
+    <!-- Artifact toolbar -->
+    <div id="toolbar">
+      <div id="artifact-info">
+        <span id="artifact-session" class="badge session-badge hidden"></span>
+        <span id="artifact-filename">No artifacts yet</span>
+        <span id="artifact-type" class="badge type-badge"></span>
+      </div>
+      <div id="toolbar-actions">
+        <button id="btn-theme" class="toolbar-btn" title="Change theme">Theme</button>
+        <button id="btn-keep" class="toolbar-btn" title="Keep artifact (Ctrl+K)">Keep</button>
+        <button id="btn-copy" class="toolbar-btn" title="Copy to clipboard">Copy</button>
+        <button id="btn-download" class="toolbar-btn" title="Download file">Save</button>
+        <button id="btn-raw" class="toolbar-btn" title="Toggle raw/rendered">Raw</button>
+      </div>
+    </div>
+
+    <!-- Content display -->
+    <div id="content">
+      <div id="empty-state">
+        <div class="empty-icon">&#9671;</div>
+        <div class="empty-title">Artifact Viewer Ready</div>
+        <div class="empty-subtitle">Artifacts from Claude Code will appear here</div>
+        <div class="empty-hint">
+          <code>artifact push &lt;file&gt;</code> to send manually
+        </div>
+      </div>
+      <div id="rendered-content" class="hidden"></div>
+      <div id="raw-content" class="hidden"></div>
+    </div>
+
+    <!-- Status bar -->
+    <div id="statusbar">
+      <span id="status-text">Listening...</span>
+      <span id="status-time"></span>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

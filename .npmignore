@@ -1,0 +1,11 @@
+node_modules/
+.github/
+archive/
+lib/
+*.backup.*
+CLAUDE.md
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+SECURITY.md
+.editorconfig
+.gitignore

@@ -1,0 +1,55 @@
+{
+  "name": "claude-artifact-viewer",
+  "version": "1.2.1",
+  "description": "Floating artifact viewer panel for Claude Code — displays overviews, reports, and code in a native window bound to your terminal",
+  "main": "main.js",
+  "bin": {
+    "artifact": "./cli/artifact.js"
+  },
+  "scripts": {
+    "start": "electron . --no-sandbox",
+    "dev": "electron . --no-sandbox --dev"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "dompurify": "^3.3.3",
+    "highlight.js": "11.11.1",
+    "marked": "14.1.4",
+    "marked-highlight": "2.2.3",
+    "ws": "8.19.0"
+  },
+  "devDependencies": {
+    "electron": "33.4.11"
+  },
+  "keywords": [
+    "claude",
+    "electron",
+    "artifact",
+    "terminal",
+    "markdown"
+  ],
+  "author": "Jason Paul Michaels",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sanchez314c/claude-artifact-viewer"
+  },
+  "homepage": "https://github.com/sanchez314c/claude-artifact-viewer#readme",
+  "bugs": {
+    "url": "https://github.com/sanchez314c/claude-artifact-viewer/issues"
+  },
+  "files": [
+    "main.js",
+    "preload.js",
+    "renderer/",
+    "cli/",
+    "hooks/",
+    "bin/",
+    "docs/",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md"
+  ]
+}
