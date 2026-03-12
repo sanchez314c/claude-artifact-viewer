@@ -89,7 +89,9 @@ esac
 # ── Ensure viewer is running (auto-launch if needed) ──
 ensure_viewer_running || exit 0
 
-PORT=$(cat "$PORT_FILE")
+PORT_DATA=$(cat "$PORT_FILE")
+PORT=$(echo "$PORT_DATA" | cut -d: -f1)
+TOKEN=$(echo "$PORT_DATA" | cut -d: -f2-)
 
 # ── Build and push artifact with session ID ──
 FILENAME=$(basename "$FILE_PATH")
@@ -114,6 +116,7 @@ jq -n \
   '{action:$action, title:$title, filename:$filename, content:$content, type:$type, source:$source, session:$session, timestamp:$timestamp}' \
 | curl -s -X POST "http://127.0.0.1:$PORT/artifact" \
     -H "Content-Type: application/json" \
+    ${TOKEN:+-H "Authorization: Bearer $TOKEN"} \
     -d @- > /dev/null 2>&1 &
 
 exit 0

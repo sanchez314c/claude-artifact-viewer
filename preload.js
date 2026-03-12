@@ -21,15 +21,19 @@ marked.use({ gfm: true, breaks: false });
 
 contextBridge.exposeInMainWorld('artifactAPI', {
   onArtifact: (callback) => {
+    ipcRenderer.removeAllListeners('artifact');
     ipcRenderer.on('artifact', (_, data) => callback(data));
   },
   onPinState: (callback) => {
+    ipcRenderer.removeAllListeners('pin-state');
     ipcRenderer.on('pin-state', (_, state) => callback(state));
   },
   onDownloadComplete: (callback) => {
+    ipcRenderer.removeAllListeners('download-complete');
     ipcRenderer.on('download-complete', (_, filepath) => callback(filepath));
   },
   onThemeConfig: (callback) => {
+    ipcRenderer.removeAllListeners('theme-config');
     ipcRenderer.on('theme-config', (_, config) => callback(config));
   },
   setTheme: (theme) => ipcRenderer.send('set-theme', theme),

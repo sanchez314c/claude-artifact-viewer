@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
@@ -124,6 +124,10 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      // sandbox: true is incompatible with this preload — preload requires npm packages
+      // (dompurify, marked, highlight.js) via require(). Electron sandbox mode disables
+      // require() for non-built-in modules in preload scripts. Security is enforced via
+      // contextIsolation:true + nodeIntegration:false instead.
       sandbox: false
     }
   });
@@ -221,6 +225,7 @@ function startWebSocketServer() {
     ownPort = httpServer.address().port;
     const port = ownPort;
 
+    // WebSocket server for real-time artifact push (future use — CLI and hooks currently use HTTP POST)
     wss = new WebSocketServer({ server: httpServer });
 
     wss.on('connection', (ws) => {
@@ -278,7 +283,6 @@ ipcMain.handle('detect-terminal-colors', () => {
 });
 
 ipcMain.on('download-artifact', (event, { content, filename }) => {
-  const { dialog } = require('electron');
   dialog.showSaveDialog(mainWindow, {
     defaultPath: filename,
     filters: [{ name: 'All Files', extensions: ['*'] }]

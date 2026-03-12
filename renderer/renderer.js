@@ -99,24 +99,30 @@ function applyThemeColors(colors, font) {
   }
 }
 
+// ═══════════════════ Color Utility Functions ═══════════════════
+
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return [r, g, b];
+}
+
+function rgbToHex(r, g, b) {
+  return '#' + [r, g, b].map(n => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0')).join('');
+}
+
+function mix(hex1, hex2, t) {
+  const [r1, g1, b1] = hexToRgb(hex1);
+  const [r2, g2, b2] = hexToRgb(hex2);
+  return rgbToHex(r1 + (r2 - r1) * t, g1 + (g2 - g1) * t, b1 + (b2 - b1) * t);
+}
+
+function lighten(hex, amount) { return mix(hex, '#ffffff', amount); }
+function darken(hex, amount) { return mix(hex, '#000000', amount); }
+
 function deriveFullPalette(bg, fg, palette) {
   // Generate a full theme from just bg + fg (+ optional ANSI palette)
-  function hexToRgb(hex) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return [r, g, b];
-  }
-  function rgbToHex(r, g, b) {
-    return '#' + [r, g, b].map(n => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0')).join('');
-  }
-  function mix(hex1, hex2, t) {
-    const [r1, g1, b1] = hexToRgb(hex1);
-    const [r2, g2, b2] = hexToRgb(hex2);
-    return rgbToHex(r1 + (r2 - r1) * t, g1 + (g2 - g1) * t, b1 + (b2 - b1) * t);
-  }
-  function lighten(hex, amount) { return mix(hex, '#ffffff', amount); }
-  function darken(hex, amount) { return mix(hex, '#000000', amount); }
 
   // ANSI color indices: 0=black 1=red 2=green 3=yellow 4=blue 5=magenta 6=cyan 7=white
   // 8-15 are bright versions
@@ -226,15 +232,13 @@ function showThemePicker() {
 
   document.body.appendChild(picker);
 
-  // Close picker on outside click
-  setTimeout(() => {
-    document.addEventListener('click', function closeHandler(e) {
-      if (!picker.contains(e.target) && e.target.id !== 'btn-theme') {
-        picker.remove();
-        document.removeEventListener('click', closeHandler);
-      }
-    });
-  }, 10);
+  // Close picker on outside click — stopPropagation on the button click prevents
+  // this handler from firing immediately for the same event that opened the picker.
+  document.addEventListener('click', function closeHandler(e) {
+    if (!picker.contains(e.target)) {
+      picker.remove();
+    }
+  }, { once: true });
 }
 
 // Listen for theme updates from main process
@@ -284,7 +288,7 @@ const btnKeep = document.getElementById('btn-keep');
 // ═══════════════════ Title Bar Controls ═══════════════════
 
 btnPin.addEventListener('click', () => window.artifactAPI.togglePin());
-btnTheme.addEventListener('click', () => showThemePicker());
+btnTheme.addEventListener('click', (e) => { e.stopPropagation(); showThemePicker(); });
 
 btnKeep.addEventListener('click', () => {
   if (activeIndex < 0) return;

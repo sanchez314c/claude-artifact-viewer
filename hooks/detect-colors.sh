@@ -46,18 +46,30 @@ if [ -n "$PALETTE_RAW" ] && [ "$PALETTE_RAW" != "''" ]; then
   fi
 fi
 
-FONT_JSON="null"
+FONT_VAL=""
 if [ "$USE_SYS_FONT" = "false" ] && [ -n "$FONT" ]; then
-  FONT_JSON="\"${FONT}\""
+  FONT_VAL="$FONT"
 fi
 
-cat > "$CACHE_FILE" <<EOF
-{
-  "bg": "${BG_HEX}",
-  "fg": "${FG_HEX}",
-  "font": ${FONT_JSON},
-  "palette": ${PALETTE_JSON},
-  "source": "gnome-terminal",
-  "timestamp": "$(date -Iseconds)"
-}
-EOF
+TIMESTAMP=$(date -Iseconds)
+
+if [ -n "$FONT_VAL" ]; then
+  jq -n \
+    --arg bg "$BG_HEX" \
+    --arg fg "$FG_HEX" \
+    --arg font "$FONT_VAL" \
+    --argjson palette "$PALETTE_JSON" \
+    --arg source "gnome-terminal" \
+    --arg timestamp "$TIMESTAMP" \
+    '{bg: $bg, fg: $fg, font: $font, palette: $palette, source: $source, timestamp: $timestamp}' \
+    > "$CACHE_FILE"
+else
+  jq -n \
+    --arg bg "$BG_HEX" \
+    --arg fg "$FG_HEX" \
+    --argjson palette "$PALETTE_JSON" \
+    --arg source "gnome-terminal" \
+    --arg timestamp "$TIMESTAMP" \
+    '{bg: $bg, fg: $fg, font: null, palette: $palette, source: $source, timestamp: $timestamp}' \
+    > "$CACHE_FILE"
+fi

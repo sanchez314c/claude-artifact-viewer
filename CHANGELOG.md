@@ -1,5 +1,30 @@
 # Claude Artifact Viewer — Changelog
 
+## [1.2.2] - 2026-03-12 18:23 @ Security Hardening
+
+### Security
+- **S-1/S-2 (XSS)**: Installed DOMPurify 3.3.3. All HTML and Markdown artifact content is now sanitized via `DOMPurify.sanitize()` before `innerHTML` injection. Exposed `sanitizeHTML` through `contextBridge`.
+- **S-3 (No Auth)**: HTTP `/artifact` endpoint now requires a `Bearer` token. A 64-char random hex token is generated at startup via `crypto.randomBytes(32)` and written to the port file as `port:token`. `cli/artifact.js` and `hooks/post-write.sh` both read and send the token. Unauthorized requests receive 401.
+- **S-3 (No Body Limit)**: Added 10MB body size cap to the HTTP handler. Requests exceeding the limit receive 413 and the connection is destroyed.
+- **S-4 (No Input Validation)**: POST `/artifact` handler now validates: artifact must be an object, `content` must be a string if present, `type` is coerced to `'text'` if not in the allowed list, `filename` is stripped of path separators and `..` sequences.
+- **S-5 (Shell Injection)**: `hooks/detect-colors.sh` JSON output now built exclusively via `jq -n --arg/--argjson` instead of heredoc string interpolation, eliminating injection vectors from terminal color values. `run-source-linux.sh` duplicate color detection removed — now delegates to `detect-colors.sh`.
+- **Sandbox note**: `sandbox: false` retained with explanation. Electron sandbox mode disables `require()` for npm packages in preload; since preload loads `dompurify`, `marked`, and `highlight.js`, sandbox cannot be enabled without a full architecture change. `contextIsolation: true` + `nodeIntegration: false` remain in force.
+
+## [1.2.1] - 2026-03-12 18:24 @ Packaging & Ship-Blocking Fixes
+
+### Fixed
+- `package-lock.json` regenerated — now correctly reflects v1.2.1 (was at v1.0.0)
+- `unsafe-inline` retained in CSP `style-src` — required for `element.style.setProperty` theme engine and dynamic swatch rendering (documented)
+
+### Added
+- `files` field in `package.json` to scope npm publish output
+- `homepage` and `bugs` fields in `package.json`
+- `.npmignore` to exclude dev/archive artifacts from published package
+- `.github/workflows/ci.yml` — matrix CI across ubuntu/macos/windows × Node 18/20/22
+- `.github/PULL_REQUEST_TEMPLATE.md`
+- Git repository initialized with full initial commit
+- Empty `lib/` directory removed (moved to pre-trash)
+
 ## [1.2.1] - 2026-03-12 @ Repo Compliance Pass
 
 ### Fixed
